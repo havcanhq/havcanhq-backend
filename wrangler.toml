@@ -1,0 +1,40 @@
+# The Worker name MUST match the Worker name in the Cloudflare dashboard,
+# otherwise Git-connected builds fail.
+name = "havcan-backend"
+main = "src/index.js"
+compatibility_date = "2025-09-01"
+workers_dev = true
+
+[observability]
+enabled = true
+
+# ---- Non-secret settings ---------------------------------------------------
+# Keep these HERE (not only in the dashboard): `wrangler deploy` makes this file
+# the source of truth for plain-text variables.
+[vars]
+# Comma-separated list of exact origins allowed to call the API (scheme + host, no path,
+# no trailing slash). REPLACE the placeholder with your real HavCan site origin(s), e.g.
+#   "https://havcan.com,https://www.havcan.com,https://havcan.pages.dev"
+# While it is a placeholder, every browser request is rejected (safe default).
+ALLOWED_ORIGINS = "https://REPLACE-WITH-YOUR-HAVCAN-SITE.example"
+
+GEMINI_MODEL = "gemini-2.5-flash"
+RATE_LIMIT_MAX = "10"          # fallback limiter: requests per window, per IP, per isolate
+RATE_LIMIT_WINDOW_SEC = "60"
+MAX_OUTPUT_TOKENS = "600"
+
+# ---- Rate limiting binding (Cloudflare Workers Rate Limiting API) -----------
+# Needs Wrangler >= 4.36.0. `period` must be 10 or 60. Counted per IP per location.
+# namespace_id must be an integer unique in your Cloudflare account.
+[[ratelimits]]
+name = "RATE_LIMITER"
+namespace_id = "7301"
+
+  [ratelimits.simple]
+  limit = 10
+  period = 60
+
+# ---- Secret (NOT stored in this file) ---------------------------------------
+# HAVCAN_KAAMO_GEMINI_KEY is added as a Cloudflare Secret:
+#   npx wrangler secret put HAVCAN_KAAMO_GEMINI_KEY
+# or in the dashboard: Worker > Settings > Variables and Secrets > Add > Type: Secret

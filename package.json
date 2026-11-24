@@ -1,0 +1,23 @@
+{
+  "name": "havcan-backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Cloudflare Worker backend for Kaamo, HavCan's AI assistant (Gemini, server-side).",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "node --test \"test/*.test.js\"",
+    "tail": "wrangler tail",
+    "test:live": "node scripts/live-gemini-test.mjs",
+    "smoke": "bash scripts/smoke-test.sh",
+    "check": "wrangler deploy --dry-run --outdir .wrangler/dry",
+    "check:frontend": "node scripts/frontend-integration-check.mjs ../havcan-updated.html"
+  },
+  "devDependencies": {
+    "wrangler": "^4.36.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
